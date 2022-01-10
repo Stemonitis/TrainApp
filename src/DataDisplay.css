@@ -1,0 +1,82 @@
+#dataDisplay {
+  margin-top: 10px;
+}
+#sort {
+  font-size: 17px;
+  text-align: center;
+}
+select {
+  width: 100%;
+  padding: 5px 10px;
+  border: 1px;
+  border-radius: 4px;
+  border-color: maroon;
+  text-align: center;
+  background: linear-gradient(
+    180deg,
+    rgb(255, 235, 188) 0%,
+    rgb(192, 161, 136) 49%,
+    rgb(149, 119, 76) 51%,
+    rgb(173, 137, 108) 100%
+  );
+  border-color: rgb(148, 99, 67);
+  font-size: 15px;
+  font-family: "Rasa", serif;
+}
+table,
+th,
+td {
+  border: 1px solid black;
+}
+table {
+  width: 100%;
+  font-weight: lighter;
+}
+table tr:nth-child(even) {
+  background-color: #90856b81;
+}
+table tr:hover {
+  background-color: rgba(219, 214, 188, 0.561);
+}
+button {
+  background: linear-gradient(
+    180deg,
+    rgb(255, 235, 188) 0%,
+    rgb(192, 161, 136) 49%,
+    rgb(149, 119, 76) 51%,
+    rgb(173, 137, 108) 100%
+  );
+  font-family: "Rasa", serif;
+}
+#newEntryWrapper {
+  width: 100%;
+}
+input {
+  width: 18%;
+}
+#finished {
+  width: 20%;
+}
+.edit {
+  width: 50%;
+}
+.delete {
+  width: 50%;
+}
+.editInput {
+  width: 90%;
+  background-color: rgb(189, 162, 128);
+}
+.save {
+  width: 100%;
+  color: black;
+}
+.header {
+  text-decoration-line: underline;
+  font-weight: 900;
+  background-color: chocolate;
+}
+#pageContainer {
+  display: flex;
+  justify-content: space-around;
+}
