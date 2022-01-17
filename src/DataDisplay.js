@@ -1,17 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import "./DataDisplay.css";
 import DownloadData from "./DownloadData.js";
 
-const DataDisplay = (props) => {
-  //  Add pagination controls which show 5 valid data items per page
-  // ● Set up hosting and provide a link along with your code
-  //hooks for pagination
+const DataDisplay = ({ csv }) => {
   const [page, setPage] = useState(0);
-  console.log("here");
   const [sortType, setSortType] = useState("Train Line");
   const [tableData, setTableData] = useState([]);
   const [newEntry, setNewEntry] = useState(false);
-  const [edit, setEdit] = useState(new Array(props.csv.length).fill(false));
+  const [edit, setEdit] = useState(new Array(csv.length).fill(false));
 
   //hooks for adding a new entry
   const [trainLine, setTrainLine] = useState("");
@@ -27,7 +23,7 @@ const DataDisplay = (props) => {
 
   function editEntry(e) {
     const eInd = e.target.dataset.edit;
-    const newEdit = new Array(props.csv.length).fill(false);
+    const newEdit = new Array(csv.length).fill(false);
     newEdit[eInd] = true;
     setEdit(newEdit);
     const currentValues = [...tableData[eInd]];
@@ -50,7 +46,6 @@ const DataDisplay = (props) => {
   function saveEntry(e) {
     const saveInd = e.target.dataset.save;
     const newData = [trainLineEdit, routeEdit, runNumberEdit, operatorIDEdit];
-    console.log(newData);
     const newList = [...tableData];
     newList[saveInd] = newData;
     setTableData(newList);
@@ -73,8 +68,7 @@ const DataDisplay = (props) => {
   useEffect(() => {
     //separating rows
     let uniqueSet = new Set();
-
-    let data = props.csv
+    let data = csv
       .split("\r\n")
       .slice(1)
       .map((row) => row.split(","))
@@ -94,7 +88,7 @@ const DataDisplay = (props) => {
       data.sort((a, b) => a[3].localeCompare(b[3]));
     }
     setTableData(data);
-  }, [sortType]);
+  }, [sortType, csv]);
   return (
     <div id="dataDisplay">
       <div id="sort">
@@ -108,85 +102,87 @@ const DataDisplay = (props) => {
         </select>
       </div>
       <table>
-        <tr>
-          <th className="header">Train Line</th>
-          <th className="header">Route</th>
-          <th className="header">Run Number</th>
-          <th className="header">Operator ID</th>
-          <div id="pageContainer">
-            <button onClick={(e) => setPage(page - 1 < 0 ? 0 : page - 1)}>
-              {String("<")}
-            </button>
-            <p>{page + 1}</p>
-            <button
-              onClick={(e) =>
-                setPage(
-                  Math.abs(page + 1) <= Math.floor(tableData.length / 5)
-                    ? Math.abs(page + 1)
-                    : page
-                )
-              }
-            >
-              {String(">")}
-            </button>
-          </div>
-        </tr>
-        {tableData.map((row, i) =>
-          i >= page * 5 && i < (page + 1) * 5 ? (
-            edit[i] ? (
-              <tr key={"row" + i}>
-                {row.map((col, j) => (
-                  <>
-                    <th key={"col" + i}>
-                      {" "}
-                      <input
-                        className="editInput"
-                        placeholder={col}
-                        data-editrow={String(j)}
-                        type="text"
-                        onChange={(e) => setRow(e)}
-                      ></input>
-                    </th>
-                  </>
-                ))}
-                <button
-                  className="save"
-                  data-save={String(i)}
-                  key={"ed" + i}
-                  onClick={(e) => saveEntry(e)}
-                >
-                  Save
-                </button>
-              </tr>
+        <tbody>
+          <tr>
+            <th className="header">Train Line</th>
+            <th className="header">Route</th>
+            <th className="header">Run Number</th>
+            <th className="header">Operator ID</th>
+            <th id="pageContainer">
+              <button onClick={(e) => setPage(page - 1 < 0 ? 0 : page - 1)}>
+                {String("<")}
+              </button>
+              <p>{page + 1}</p>
+              <button
+                onClick={(e) =>
+                  setPage(
+                    Math.abs(page + 1) <= Math.floor(tableData.length / 5)
+                      ? Math.abs(page + 1)
+                      : page
+                  )
+                }
+              >
+                {String(">")}
+              </button>
+            </th>
+          </tr>
+          {tableData.map((row, i) =>
+            i >= page * 5 && i < (page + 1) * 5 ? (
+              edit[i] ? (
+                <tr key={"row" + i}>
+                  {row.map((col, j) => (
+                    <>
+                      <th key={"col" + i + j}>
+                        {" "}
+                        <input
+                          className="editInput"
+                          placeholder={col}
+                          data-editrow={String(j)}
+                          type="text"
+                          onChange={(e) => setRow(e)}
+                        ></input>
+                      </th>
+                    </>
+                  ))}
+                  <button
+                    className="save"
+                    data-save={String(i)}
+                    key={"ed" + i}
+                    onClick={(e) => saveEntry(e)}
+                  >
+                    Save
+                  </button>
+                </tr>
+              ) : (
+                <tr key={"rows" + i}>
+                  {row.map((col, i) => (
+                    <>
+                      <th key={"cols" + i}>{col}</th>
+                    </>
+                  ))}
+                  <button
+                    className="edit"
+                    data-edit={String(i)}
+                    key={"ed" + i}
+                    onClick={(e) => editEntry(e)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="delete"
+                    key={"del" + i}
+                    data-remove={String(i)}
+                    onClick={(e) => deleteEntry(e)}
+                  >
+                    Delete
+                  </button>
+                </tr>
+              )
             ) : (
-              <tr key={"row" + i}>
-                {row.map((col, i) => (
-                  <>
-                    <th key={"col" + i}>{col}</th>
-                  </>
-                ))}
-                <button
-                  className="edit"
-                  data-edit={String(i)}
-                  key={"ed" + i}
-                  onClick={(e) => editEntry(e)}
-                >
-                  Edit
-                </button>
-                <button
-                  className="delete"
-                  key={"del" + i}
-                  data-remove={String(i)}
-                  onClick={(e) => deleteEntry(e)}
-                >
-                  Delete
-                </button>
-              </tr>
+              ""
             )
-          ) : (
-            ""
-          )
-        )}
+          )}
+        </tbody>
       </table>
       {newEntry ? (
         <div id="newEntryWrapper">

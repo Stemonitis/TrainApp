@@ -5,7 +5,6 @@ import "./Main.css";
 export default function Main() {
   const reader = new FileReader();
   const [CSV, setCSV] = useState(initialData);
-
   function ready(e) {
     setCSV(reader.result);
   }
